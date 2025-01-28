@@ -1,0 +1,247 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --background-color: #f8fafc;
+    --text-color: #1e293b;
+    --border-color: #e2e8f0;
+    --error-color: #ef4444;
+    --success-color: #22c55e;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  body {
+    background: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem;
+  }
+  
+  .welcome-screen {
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .welcome-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+  }
+  
+  .btn-welcome {
+    font-size: 1.25rem;
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-welcome:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .arrow {
+    transition: transform 0.3s ease;
+  }
+  
+  .btn-welcome:hover .arrow {
+    transform: translateX(5px);
+  }
+  
+  .form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+  
+  .form-title {
+    font-size: 1.875rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-color);
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .input-group label {
+    position: absolute;
+    left: 0.75rem;
+    top: 0.75rem;
+    color: #64748b;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .input-group input:focus,
+  .input-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+  }
+  
+  .input-group input:focus + label,
+  .input-group input:not(:placeholder-shown) + label {
+    transform: translateY(-1.5rem);
+    font-size: 0.875rem;
+    color: var(--primary-color);
+  }
+  
+  .btn-submit {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-submit:hover {
+    background: var(--primary-dark);
+  }
+  
+  .btn-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: inherit;
+  }
+  
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+  
+  .btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-back:hover {
+    color: var(--primary-color);
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .signup-text {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .login-screen,
+  .signup-screen {
+    animation: slideIn 0.5s ease-out;
+  }
+  
+  .input-group .select-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    position: static;
+  }
+  
+  .input-group select[multiple] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    min-height: 120px;
+    background-color: white;
+    margin-top: 0.25rem;
+  }
+  
+  .input-group select[multiple]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  }
+  
+  .input-group select[multiple] option {
+    padding: 0.5rem;
+    margin: 2px 0;
+  }
+  
+  .input-group select[multiple] option:checked {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .input-group select[multiple] option:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+  }
+  
+  
