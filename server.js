@@ -61,7 +61,7 @@ const taskSchema = new mongoose.Schema(
 const Task = mongoose.model('Task', taskSchema);
 
 // Login Endpoint
-app.post('/api/login', async (req, res) => {
+app.post('https://productivity-management.onrender.com/api/login', async (req, res) => {
     const { userId, password } = req.body;
 
     console.log('Login attempt:', {
