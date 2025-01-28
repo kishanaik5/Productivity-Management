@@ -34,7 +34,7 @@ function showLoginPage() {
         const password = document.getElementById("password").value
   
         try {
-          const response = await fetch("/api/login", {
+          const response = await fetch("https://productivity-management.onrender.com/api/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function showLoginPage() {
         }
   
         try {
-          const response = await fetch("/api/signup", {
+          const response = await fetch("https://productivity-management.onrender.com/api/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

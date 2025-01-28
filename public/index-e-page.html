@@ -575,7 +575,7 @@
 
         async function loadTasks(userId) {
             try {
-                const response = await fetch(`/tasks/employee/${userId}`);
+                const response = await fetch(`https://productivity-management.onrender.com/tasks/employee/${userId}`);
                 const tasks = await response.json();
 
                 if (tasks && tasks.length) {

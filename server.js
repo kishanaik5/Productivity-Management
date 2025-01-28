@@ -117,7 +117,7 @@ app.post('https://productivity-management.onrender.com/api/login', async (req, r
 });
 
 // Signup Endpoint
-app.post('/api/signup', async (req, res) => {
+app.post('https://productivity-management.onrender.com/api/signup', async (req, res) => {
     const { name, userId, role, designation, skills, departments, email, password } = req.body;
 
     try {
@@ -152,7 +152,7 @@ app.post('/api/signup', async (req, res) => {
 });
 
 // Update the tasks endpoint to be more specific for employees
-app.get('/tasks/employee/:userId', async (req, res) => {
+app.get('https://productivity-management.onrender.com/tasks/employee/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
         const tasks = await Task.find({ emp_ids: userId });
@@ -167,7 +167,7 @@ app.get('/tasks/employee/:userId', async (req, res) => {
 });
 
 // Mark Task as Complete
-app.post('/tasks/mark-complete', async (req, res) => {
+app.post('https://productivity-management.onrender.com/tasks/mark-complete', async (req, res) => {
     const { taskId } = req.body;
 
     try {
@@ -191,27 +191,27 @@ app.post('/tasks/mark-complete', async (req, res) => {
 });
 
 // Update default route to serve index3.html
-app.get('/manager-login', (req, res) => {
+app.get('https://productivity-management.onrender.com/manager-login', (req, res) => {
     res.sendFile(__dirname + '/public/index3.html');
 });
 
 // Update default route to serve index3.html
-app.get('/', (req, res) => {
+app.get('https://productivity-management.onrender.com/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
 // Add route for manager dashboard
-app.get('/manager-dashboard', (req, res) => {
+app.get('https://productivity-management.onrender.com/manager-dashboard', (req, res) => {
     res.sendFile(__dirname + '/public/manager-dashboard.html');
 });
 
 // Add route for employee dashboard (rename existing dashboard route)
-app.get('/employee-dashboard', (req, res) => {
+app.get('https://productivity-management.onrender.com/employee-dashboard', (req, res) => {
     res.sendFile(__dirname + '/public/index-e-page.html');
 });
 
 // Manager info endpoint
-app.get('/api/manager-info/:userId', async (req, res) => {
+app.get('https://productivity-management.onrender.com/api/manager-info/:userId', async (req, res) => {
     try {
         console.log('Fetching manager info for userId:', req.params.userId);
         const manager = await Employee.findOne({ 
@@ -238,7 +238,7 @@ app.get('/api/manager-info/:userId', async (req, res) => {
 });
 
 // Employees by department endpoint
-app.get('/api/employees-by-departments', async (req, res) => {
+app.get('https://productivity-management.onrender.com/api/employees-by-departments', async (req, res) => {
     const { departments } = req.query;
     console.log('Fetching employees for departments:', departments);
     
@@ -259,7 +259,7 @@ app.get('/api/employees-by-departments', async (req, res) => {
 });
 
 // Get last task ID endpoint
-app.get('/api/tasks/last-id', async (req, res) => {
+app.get('https://productivity-management.onrender.com/api/tasks/last-id', async (req, res) => {
     try {
         const lastTask = await Task.findOne()
             .sort({ _id: -1 })
@@ -279,7 +279,7 @@ app.get('/api/tasks/last-id', async (req, res) => {
 });
 
 // Create new task endpoint
-app.post('/api/tasks', async (req, res) => {
+app.post('https://productivity-management.onrender.com/api/tasks', async (req, res) => {
     try {
         const taskData = req.body;
         
@@ -307,7 +307,7 @@ app.post('/api/tasks', async (req, res) => {
 });
 
 // Get tasks by status and flags for manager
-app.get('/api/tasks/:filter', async (req, res) => {
+app.get('https://productivity-management.onrender.com/api/tasks/:filter', async (req, res) => {
     const { filter } = req.params;
     const managerId = req.query.managerId; // We'll send this from frontend
 
@@ -352,7 +352,7 @@ app.get('/api/tasks/:filter', async (req, res) => {
 });
 
 // Update task status endpoint
-app.post('/api/tasks/update-status', async (req, res) => {
+app.post('https://productivity-management.onrender.com/api/tasks/update-status', async (req, res) => {
     const { taskId } = req.body;
 
     try {
@@ -377,7 +377,7 @@ app.post('/api/tasks/update-status', async (req, res) => {
 });
 
 // Add this test endpoint
-app.get('/api/test-db', async (req, res) => {
+app.get('https://productivity-management.onrender.com/api/test-db', async (req, res) => {
     try {
         const collections = await mongoose.connection.db.listCollections().toArray();
         const dbName = mongoose.connection.db.databaseName;

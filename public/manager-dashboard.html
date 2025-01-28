@@ -293,7 +293,7 @@
 
         async function loadManagerData(userId) {
             try {
-                const response = await fetch(`/api/manager-info/${userId}`);
+                const response = await fetch(`https://productivity-management.onrender.com/api/manager-info/${userId}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -344,7 +344,7 @@
 
         async function loadEmployees(department) {
             try {
-                const response = await fetch(`/api/employees-by-departments?departments=${department}`);
+                const response = await fetch(`https://productivity-management.onrender.com/api/employees-by-departments?departments=${department}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -389,7 +389,7 @@
 
             try {
                 const managerId = sessionStorage.getItem('userId');
-                const response = await fetch(`/api/tasks/${filter}?managerId=${managerId}`);
+                const response = await fetch(`https://productivity-management.onrender.com/api/tasks/${filter}?managerId=${managerId}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -491,7 +491,7 @@
         // Add this function to get the next task ID
         async function getNextTaskId() {
             try {
-                const response = await fetch('/api/tasks/last-id');
+                const response = await fetch('https://productivity-management.onrender.com/api/tasks/last-id');
                 const data = await response.json();
                 
                 if (data.success && data.lastId) {
@@ -536,7 +536,7 @@
                     createdBy: managerId
                 };
 
-                const response = await fetch('/api/tasks', {
+                const response = await fetch('https://productivity-management.onrender.com/api/tasks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -563,7 +563,7 @@
         // Add approve task function
         async function approveTask(taskId) {
             try {
-                const response = await fetch('/api/tasks/update-status', {
+                const response = await fetch('https://productivity-management.onrender.com/api/tasks/update-status', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

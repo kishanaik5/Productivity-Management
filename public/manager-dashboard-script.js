@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadManagerData(userId) {
     try {
         console.log('Fetching manager data for userId:', userId);
-        const response = await fetch(`/api/manager-info/${userId}`);
+        const response = await fetch(`https://productivity-management.onrender.com/api/manager-info/${userId}`);
         const data = await response.json();
         console.log('Manager data received:', data);
         
@@ -84,7 +84,7 @@ function showDepartments(departments) {
 async function loadEmployees(department) {
     try {
         console.log('Loading employees for department:', department);
-        const response = await fetch(`/api/employees-by-departments?departments=${department}`);
+        const response = await fetch(`https://productivity-management.onrender.com/api/employees-by-departments?departments=${department}`);
         const data = await response.json();
         console.log('Employee data received:', data);
 
