@@ -398,5 +398,5 @@ app.get('/api/test-db', async (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-    console.log(`Server running on https://productivity-management.onrender.com:${port}`);
+    console.log(`Server running on https://productivity-management.onrender.com`);
 });
