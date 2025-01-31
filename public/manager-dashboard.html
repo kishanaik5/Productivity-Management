@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Dashboard</title>
     <link rel="stylesheet" href="manager-dashboard-css.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Additional styles for new features */
         .search-container {
@@ -155,6 +156,61 @@
             background-color: #f5f5f5;
             border-radius: 4px;
         }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge.overdue {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-badge.failed {
+            background-color: #7f1d1d;
+            color: white;
+        }
+
+        .task-status-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -170,7 +226,9 @@
                            onkeyup="searchEmployees()">
                 </div>
                 <span id="managerName"></span>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </header>
 
@@ -279,13 +337,26 @@
         </div>
     </div>
 
+    <!-- Task Details Modal -->
+    <div id="taskDetailsModal" class="modal">
+        <div class="modal-content">
+            <h2>Task Details</h2>
+            <div id="taskDetailsContent"></div>
+            <button class="action-btn" onclick="closeTaskDetailsModal()">Close</button>
+        </div>
+    </div>
+
     <script>
         let currentEmployees = []; // Store current employees for searching
 
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Page loaded, checking for userId');
             const userId = sessionStorage.getItem('userId');
+            console.log('UserId from session:', userId);
+
             if (!userId) {
-                window.location.href = '/manager-login';
+                console.log('No userId found, redirecting to login');
+                window.location.href = '/index3.html';
                 return;
             }
             await loadManagerData(userId);
@@ -293,33 +364,57 @@
 
         async function loadManagerData(userId) {
             try {
+                console.log('Fetching manager data for userId:', userId);
                 const response = await fetch(`/api/manager-info/${userId}`);
                 const data = await response.json();
+                console.log('Manager data received:', data);
                 
                 if (data.success) {
-                    document.getElementById('managerName').textContent = data.name;
+                    // Display manager name
+                    const managerName = document.getElementById('managerName');
+                    if (managerName) {
+                        managerName.textContent = data.name;
+                        console.log('Manager name set:', data.name);
+                    } else {
+                        console.error('managerName element not found');
+                    }
                     
+                    // Display departments
                     if (data.departments && data.departments.length > 0) {
+                        console.log('Departments found:', data.departments);
                         showDepartments(data.departments);
                         loadEmployees(data.departments[0]);
+                    } else {
+                        console.log('No departments found');
+                        const departmentsList = document.getElementById('departmentsList');
+                        if (departmentsList) {
+                            departmentsList.innerHTML = '<div class="department-item">No departments assigned</div>';
+                        }
                     }
+                } else {
+                    console.error('Failed to load manager data:', data.message);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error in loadManagerData:', error);
             }
         }
 
         function showDepartments(departments) {
+            console.log('Showing departments:', departments);
             const departmentsList = document.getElementById('departmentsList');
-            departmentsList.innerHTML = '';
+            
+            if (!departmentsList) {
+                console.error('departmentsList element not found');
+                return;
+            }
 
+            departmentsList.innerHTML = '';
             departments.forEach(dept => {
                 const deptDiv = document.createElement('div');
                 deptDiv.className = 'department-item';
                 deptDiv.textContent = dept;
                 deptDiv.onclick = () => {
-                    // Show employee section when department is clicked
-                    toggleSection('employee');
+                    console.log('Department clicked:', dept);
                     document.querySelectorAll('.department-item').forEach(item => 
                         item.classList.remove('active'));
                     deptDiv.classList.add('active');
@@ -344,20 +439,31 @@
 
         async function loadEmployees(department) {
             try {
+                console.log('Loading employees for department:', department);
                 const response = await fetch(`/api/employees-by-departments?departments=${department}`);
                 const data = await response.json();
-                
+                console.log('Employee data received:', data);
+
                 if (data.success) {
                     displayEmployees(data.employees);
+                } else {
+                    console.error('Failed to load employees:', data.message);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error in loadEmployees:', error);
             }
         }
 
         function displayEmployees(employees) {
+            console.log('Displaying employees:', employees);
             currentEmployees = employees;
             const employeeList = document.getElementById('employeeList');
+            
+            if (!employeeList) {
+                console.error('employeeList element not found');
+                return;
+            }
+
             employeeList.innerHTML = '';
 
             if (employees.length === 0) {
@@ -417,27 +523,82 @@
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
-            if (tasks.length === 0) {
+            // Filter tasks based on status
+            let filteredTasks = tasks;
+            switch (filter) {
+                case 'completed':
+                    filteredTasks = tasks.filter(task => task.status === 'Success');
+                    break;
+                case 'inProgress':
+                    filteredTasks = tasks.filter(task => !task.empFlag && !task.manFlag);
+                    break;
+                case 'review':
+                    filteredTasks = tasks.filter(task => task.empFlag && !task.manFlag);
+                    break;
+                case 'failed':
+                    filteredTasks = tasks.filter(task => {
+                        const status = checkTaskStatus(task);
+                        return status === 'Failed';
+                    });
+                    break;
+            }
+
+            if (filteredTasks.length === 0) {
                 taskList.innerHTML = '<tr><td colspan="5">No tasks found</td></tr>';
                 return;
             }
 
-            tasks.forEach(task => {
+            filteredTasks.forEach(task => {
+                const status = checkTaskStatus(task);
                 const row = document.createElement('tr');
+                
+                // Format the date and time properly
+                const dueDate = new Date(task.deadlineDate);
+                const formattedDate = dueDate.toLocaleDateString();
+                
+                // Format time from 24-hour to 12-hour format
+                const formatTime = (timeStr) => {
+                    const [hours, minutes] = timeStr.split(':');
+                    const hour = parseInt(hours);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const hour12 = hour % 12 || 12;
+                    return `${hour12}:${minutes} ${ampm}`;
+                };
+
+                const formattedTime = formatTime(task.deadlineTime);
+
                 row.innerHTML = `
                     <td>${task.taskMessage}</td>
                     <td>${task.emp_ids.join(', ')}</td>
-                    <td>${task.status}</td>
-                    <td>${new Date(task.deadlineDate).toLocaleDateString()} ${task.deadlineTime}</td>
+                    <td class="task-status-cell">
+                        ${status}
+                        ${status === 'Overdue' ? 
+                            '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
+                            status === 'Failed' ? 
+                            '<span class="status-badge failed">❌ Failed</span>' : 
+                            ''}
+                    </td>
+                    <td>${formattedDate}, ${formattedTime}</td>
                     <td>
-                        ${filter === 'review' ? 
+                        <button onclick='viewTaskDetails(${JSON.stringify({
+                            _id: task._id,
+                            taskMessage: task.taskMessage,
+                            taskDescription: task.taskDescription,
+                            level: task.level,
+                            empFlag: task.empFlag,
+                            manFlag: task.manFlag,
+                            deadlineDate: task.deadlineDate,
+                            deadlineTime: task.deadlineTime,
+                            emp_ids: task.emp_ids,
+                            status: task.status
+                        })})' class="action-btn">
+                            View Details
+                        </button>
+                        ${status === 'review' ? 
                             `<button onclick="approveTask('${task._id}')" class="action-btn">
                                 Approve Task
-                            </button>` :
-                            `<button onclick="viewTaskDetails('${task._id}')" class="action-btn">
-                                View Details
-                            </button>`
-                        }
+                            </button>` : 
+                            ''}
                     </td>
                 `;
                 taskList.appendChild(row);
@@ -484,8 +645,9 @@
         }
 
         function logout() {
+            console.log('Logging out');
             sessionStorage.clear();
-            window.location.href = '/';
+            window.location.href = '/index.html';
         }
 
         // Add this function to get the next task ID
@@ -591,6 +753,92 @@
                 modal.style.display = 'none';
             }
         };
+
+        // Check task status
+        function checkTaskStatus(task) {
+            const now = new Date();
+            const dueDate = new Date(task.deadlineDate);
+            const [hours, minutes] = task.deadlineTime.split(':');
+            dueDate.setHours(parseInt(hours), parseInt(minutes));
+
+            // Check if task is failed (past due date)
+            if (now > dueDate && (!task.empFlag || !task.manFlag)) {
+                return 'Failed';
+            }
+
+            // Check if task is overdue (same day, past time)
+            if (now.toDateString() === dueDate.toDateString() && 
+                now > dueDate && task.status !== 'Success') {
+                return 'Overdue';
+            }
+
+            return task.status;
+        }
+
+        // View task details
+        function viewTaskDetails(task) {
+            const status = checkTaskStatus(task);
+            const modal = document.getElementById('taskDetailsModal');
+            const content = document.getElementById('taskDetailsContent');
+            
+            const dueDate = new Date(task.deadlineDate);
+            const formattedDate = dueDate.toLocaleDateString();
+            
+            // Format time
+            const [hours, minutes] = task.deadlineTime.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            const formattedTime = `${hour12}:${minutes} ${ampm}`;
+
+            content.innerHTML = `
+                <div class="task-detail-grid">
+                    <div class="detail-item">
+                        <strong>Task ID:</strong>
+                        <p>${task._id}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Task Name:</strong>
+                        <p>${task.taskMessage}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Description:</strong>
+                        <p>${task.taskDescription || 'No description provided'}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Priority Level:</strong>
+                        <p class="priority-${task.level.toLowerCase()}">${task.level}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Status:</strong>
+                        <p class="task-status-cell">
+                            ${status}
+                            ${status === 'Overdue' ? 
+                                '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
+                                status === 'Failed' ? 
+                                '<span class="status-badge failed">❌ Failed</span>' : 
+                                ''}
+                        </p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Due Date & Time:</strong>
+                        <p>${formattedDate}, ${formattedTime}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Assigned To:</strong>
+                        <p>${task.emp_ids.join(', ')}</p>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        // Close task details modal
+        function closeTaskDetailsModal() {
+            const modal = document.getElementById('taskDetailsModal');
+            modal.style.display = 'none';
+        }
     </script>
 </body>
 </html>

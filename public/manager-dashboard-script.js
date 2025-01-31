@@ -161,5 +161,132 @@ function createTask() {
 function logout() {
     console.log('Logging out');
     sessionStorage.clear();
-    window.location.href = '/index3.html';
+    window.location.href = '/index.html';
+}
+
+// Update the displayTasks function to properly handle the time
+function displayTasks(tasks, filter) {
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+
+    // Filter tasks based on status
+    let filteredTasks = tasks;
+    switch (filter) {
+        // ... existing filter cases ...
+    }
+
+    filteredTasks.forEach(task => {
+        const status = checkTaskStatus(task);
+        const row = document.createElement('tr');
+        
+        // Format the date and time properly
+        const dueDate = new Date(task.deadlineDate);
+        const formattedDate = dueDate.toLocaleDateString();
+        
+        // Format time from 24-hour to 12-hour format
+        const formatTime = (timeStr) => {
+            const [hours, minutes] = timeStr.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        };
+
+        const formattedTime = formatTime(task.deadlineTime);
+
+        row.innerHTML = `
+            <td>${task.taskMessage}</td>
+            <td>${task.emp_ids.join(', ')}</td>
+            <td class="task-status-cell">
+                ${status}
+                ${status === 'Overdue' ? 
+                    '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
+                    status === 'Failed' ? 
+                    '<span class="status-badge failed">❌ Failed</span>' : 
+                    ''}
+            </td>
+            <td>${formattedDate}, ${formattedTime}</td>
+            <td>
+                <button onclick='viewTaskDetails(${JSON.stringify({
+                    _id: task._id,
+                    taskMessage: task.taskMessage,
+                    taskDescription: task.taskDescription,
+                    level: task.level,
+                    empFlag: task.empFlag,
+                    manFlag: task.manFlag,
+                    deadlineDate: task.deadlineDate,
+                    deadlineTime: task.deadlineTime,
+                    emp_ids: task.emp_ids,
+                    status: task.status
+                })})' class="action-btn">
+                    View Details
+                </button>
+                ${status === 'review' ? 
+                    `<button onclick="approveTask('${task._id}')" class="action-btn">
+                        Approve Task
+                    </button>` : 
+                    ''}
+            </td>
+        `;
+        taskList.appendChild(row);
+    });
+}
+
+// Update the viewTaskDetails function
+function viewTaskDetails(task) {
+    const status = checkTaskStatus(task);
+    const modal = document.getElementById('taskDetailsModal');
+    const content = document.getElementById('taskDetailsContent');
+    
+    const dueDate = new Date(task.deadlineDate);
+    const formattedDate = dueDate.toLocaleDateString();
+    
+    // Format time
+    const [hours, minutes] = task.deadlineTime.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    const formattedTime = `${hour12}:${minutes} ${ampm}`;
+
+    content.innerHTML = `
+        <div class="task-detail-grid">
+            <div class="detail-item">
+                <strong>Task ID:</strong>
+                <p>${task._id}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Task Name:</strong>
+                <p>${task.taskMessage}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Description:</strong>
+                <p>${task.taskDescription || 'No description provided'}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Priority Level:</strong>
+                <p class="priority-${task.level.toLowerCase()}">${task.level}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Status:</strong>
+                <p class="task-status-cell">
+                    ${status}
+                    ${status === 'Overdue' ? 
+                        '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
+                        status === 'Failed' ? 
+                        '<span class="status-badge failed">❌ Failed</span>' : 
+                        ''}
+                </p>
+            </div>
+            <div class="detail-item">
+                <strong>Due Date & Time:</strong>
+                <p>${formattedDate}, ${formattedTime}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Assigned To:</strong>
+                <p>${task.emp_ids.join(', ')}</p>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'block';
 }
