@@ -3,13 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static files
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
 
 const MONGODB_URI = `mongodb+srv://kishanknaik03:${process.env.MONGODB_PASSWORD}@aws1freecluster.pa4wd.mongodb.net/db?retryWrites=true&w=majority&appName=AWS1FreeCluster`;
 
@@ -192,22 +193,22 @@ app.post('/tasks/mark-complete', async (req, res) => {
 
 // Update default route to serve index3.html
 app.get('/manager-login', (req, res) => {
-    res.sendFile(__dirname + '/public/index3.html');
+    res.sendFile(path.join(__dirname, 'public', 'index3.html'));
 });
 
 // Update default route to serve index3.html
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Add route for manager dashboard
 app.get('/manager-dashboard', (req, res) => {
-    res.sendFile(__dirname + '/public/manager-dashboard.html');
+    res.sendFile(path.join(__dirname, 'public', 'manager-dashboard.html'));
 });
 
 // Add route for employee dashboard (rename existing dashboard route)
 app.get('/employee-dashboard', (req, res) => {
-    res.sendFile(__dirname + '/public/index-e-page.html');
+    res.sendFile(path.join(__dirname, 'public', 'index-e-page.html'));
 });
 
 // Manager info endpoint
@@ -396,7 +397,15 @@ app.get('/api/test-db', async (req, res) => {
     }
 });
 
+// Static file middleware should come AFTER API routes
+app.use(express.static(path.join(__dirname, 'public')));
+
+// HTML routes should come LAST
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Start Server
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 });

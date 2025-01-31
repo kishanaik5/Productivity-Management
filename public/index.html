@@ -240,7 +240,7 @@
                     
                     showCustomAlert("Success!", "Login successful. Redirecting...", "success");
                     setTimeout(() => {
-                        window.location.href = "http://localhost:3000/employee-dashboard";
+                        window.location.href = "/employee-dashboard";
                     }, 1500);
                 } else {
                     showCustomAlert("Login Failed", result.message || "Invalid credentials. Please check your User ID and Password.");
