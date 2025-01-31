@@ -797,8 +797,14 @@
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
+                            }) + ' ' + task.deadlineTime.split(':').map((n, i) => {
+                                if (i === 0) {
+                                    const hour = parseInt(n);
+                                    return (hour % 12 || 12) + ':';
+                                }
+                                return n + ' ' + (parseInt(task.deadlineTime) >= 12 ? 'PM' : 'AM');
+                            }).join('')
+
                             })}
                         </div>
                     </div>
