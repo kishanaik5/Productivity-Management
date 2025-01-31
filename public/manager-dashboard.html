@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="manager-dashboard-css.css">
+    <style>
+        /* Additional styles for new features */
+        .search-container {
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .task-section {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .task-filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: var(--background-color);
+            transition: all 0.3s ease;
+        }
+
+        .task-filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .task-table th,
+        .task-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .task-filter-btn {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .create-task-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none; /* Initially hidden */
+        }
+
+        .create-task-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 60%;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-form input,
+        .modal-form select,
+        .modal-form textarea {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .selected-employees {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Manager Dashboard</h1>
+            <div class="user-info">
+                <div class="search-container">
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Search employees or designations..."
+                           id="searchInput"
+                           onkeyup="searchEmployees()">
+                </div>
+                <span id="managerName"></span>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Departments Section -->
+                <div class="department-section">
+                    <h2>Your Departments</h2>
+                    <div id="departmentsList" class="departments-list">
+                        <!-- Departments populated here -->
+                    </div>
+                </div>
+
+                <!-- Tasks Navigation Section -->
+                <div class="task-section">
+                    <h2>Tasks Overview</h2>
+                    <div class="task-filters">
+                        <button class="task-filter-btn" onclick="filterTasks('completed')">Completed</button>
+                        <button class="task-filter-btn" onclick="filterTasks('review')">Review</button>
+                        <button class="task-filter-btn" onclick="filterTasks('inProgress')">In Progress</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Toggleable Content -->
+            <div class="right-column">
+                <!-- Employee Section -->
+                <div id="employeeSection" class="content-section">
+                    <h2>Department Employees</h2>
+                    <table class="employee-table">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Departments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeList">
+                            <!-- Employees populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Task Details Section -->
+                <div id="taskSection" class="content-section" style="display: none;">
+                    <h2>Task Details</h2>
+                    <table class="task-table">
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Assigned To</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taskList">
+                            <!-- Tasks populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="createTaskBtn" class="create-task-btn" onclick="createTask()" style="display: none;">
+        Create Task +
+    </button>
+
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <h2>Create New Task</h2>
+            <form id="taskForm" class="modal-form">
+                <div>
+                    <label for="taskName">Task Name:</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                <div>
+                    <label for="taskDescription">Task Description:</label>
+                    <textarea id="taskDescription" rows="4" required></textarea>
+                </div>
+                <div>
+                    <label for="priorityLevel">Priority Level:</label>
+                    <select id="priorityLevel" required>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="dueDate">Due Date:</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+                <div>
+                    <label for="dueTime">Due Time:</label>
+                    <input type="time" id="dueTime" required>
+                </div>
+                <div class="selected-employees">
+                    <h3>Selected Employees:</h3>
+                    <div id="selectedEmployeesList"></div>
+                </div>
+                <button type="submit" class="action-btn">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentEmployees = []; // Store current employees for searching
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/index3.html';
+                return;
+            }
+            await loadManagerData(userId);
+        });
+
+        async function loadManagerData(userId) {
+            try {
+                const response = await fetch(`/api/manager-info/${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('managerName').textContent = data.name;
+                    
+                    if (data.departments && data.departments.length > 0) {
+                        showDepartments(data.departments);
+                        loadEmployees(data.departments[0]);
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function showDepartments(departments) {
+            const departmentsList = document.getElementById('departmentsList');
+            departmentsList.innerHTML = '';
+
+            departments.forEach(dept => {
+                const deptDiv = document.createElement('div');
+                deptDiv.className = 'department-item';
+                deptDiv.textContent = dept;
+                deptDiv.onclick = () => {
+                    // Show employee section when department is clicked
+                    toggleSection('employee');
+                    document.querySelectorAll('.department-item').forEach(item => 
+                        item.classList.remove('active'));
+                    deptDiv.classList.add('active');
+                    loadEmployees(dept);
+                };
+                departmentsList.appendChild(deptDiv);
+            });
+
+            if (departments.length > 0) {
+                departmentsList.firstChild.classList.add('active');
+            }
+        }
+
+        function searchEmployees() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const filteredEmployees = currentEmployees.filter(employee => 
+                employee.name.toLowerCase().includes(searchText) ||
+                employee.designation.toLowerCase().includes(searchText)
+            );
+            displayEmployees(filteredEmployees);
+        }
+
+        async function loadEmployees(department) {
+            try {
+                const response = await fetch(`/api/employees-by-departments?departments=${department}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayEmployees(data.employees);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function displayEmployees(employees) {
+            currentEmployees = employees;
+            const employeeList = document.getElementById('employeeList');
+            employeeList.innerHTML = '';
+
+            if (employees.length === 0) {
+                employeeList.innerHTML = '<tr><td colspan="4">No employees found</td></tr>';
+                return;
+            }
+
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="employee-select" value="${employee._id}" 
+                        data-name="${employee.name}" onchange="updateCreateTaskButton()"></td>
+                    <td>${employee.name}</td>
+                    <td>${employee.designation}</td>
+                    <td>${employee.departments.join(', ')}</td>
+                `;
+                employeeList.appendChild(row);
+            });
+
+            addSelectAllButton();
+        }
+
+        async function filterTasks(filter) {
+            toggleSection('task');
+            
+            document.querySelectorAll('.task-filter-btn').forEach(btn => 
+                btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            try {
+                const managerId = sessionStorage.getItem('userId');
+                const response = await fetch(`/api/tasks/${filter}?managerId=${managerId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayTasks(data.tasks, filter);
+                }
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        }
+
+        function toggleSection(section) {
+            const employeeSection = document.getElementById('employeeSection');
+            const taskSection = document.getElementById('taskSection');
+
+            if (section === 'employee') {
+                employeeSection.style.display = 'block';
+                taskSection.style.display = 'none';
+            } else {
+                employeeSection.style.display = 'none';
+                taskSection.style.display = 'block';
+            }
+        }
+
+        function displayTasks(tasks, filter) {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<tr><td colspan="5">No tasks found</td></tr>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${task.taskMessage}</td>
+                    <td>${task.emp_ids.join(', ')}</td>
+                    <td>${task.status}</td>
+                    <td>${new Date(task.deadlineDate).toLocaleDateString()} ${task.deadlineTime}</td>
+                    <td>
+                        ${filter === 'review' ? 
+                            `<button onclick="approveTask('${task._id}')" class="action-btn">
+                                Approve Task
+                            </button>` :
+                            `<button onclick="viewTaskDetails('${task._id}')" class="action-btn">
+                                View Details
+                            </button>`
+                        }
+                    </td>
+                `;
+                taskList.appendChild(row);
+            });
+        }
+
+        function addSelectAllButton() {
+            const headerRow = document.querySelector('.employee-table thead tr');
+            const selectAllCell = headerRow.querySelector('th:first-child');
+            selectAllCell.innerHTML = `
+                <input type="checkbox" id="selectAll" onclick="toggleSelectAll()">
+            `;
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const employeeCheckboxes = document.querySelectorAll('.employee-select');
+            employeeCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateCreateTaskButton();
+        }
+
+        function updateCreateTaskButton() {
+            const selectedEmployees = document.querySelectorAll('.employee-select:checked');
+            const createTaskBtn = document.getElementById('createTaskBtn');
+            createTaskBtn.style.display = selectedEmployees.length > 0 ? 'block' : 'none';
+        }
+
+        function createTask() {
+            const modal = document.getElementById('taskModal');
+            const selectedEmployeesList = document.getElementById('selectedEmployeesList');
+            selectedEmployeesList.innerHTML = '';
+
+            const selectedEmployees = document.querySelectorAll('.employee-select:checked');
+            selectedEmployees.forEach(emp => {
+                const empName = emp.getAttribute('data-name');
+                const div = document.createElement('div');
+                div.textContent = empName;
+                selectedEmployeesList.appendChild(div);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = '/index3.html';
+        }
+
+        // Add this function to get the next task ID
+        async function getNextTaskId() {
+            try {
+                const response = await fetch('/api/tasks/last-id');
+                const data = await response.json();
+                
+                if (data.success && data.lastId) {
+                    // Extract the numeric part and increment
+                    const numericPart = parseInt(data.lastId.substring(1));
+                    const nextNum = numericPart + 1;
+                    // Format with leading zeros (T001, T002, etc.)
+                    return `T${String(nextNum).padStart(3, '0')}`;
+                } else {
+                    // If no existing tasks, start with T001
+                    return 'T001';
+                }
+            } catch (error) {
+                console.error('Error getting next task ID:', error);
+                throw error;
+            }
+        }
+
+        // Modify the form submission handler
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const taskId = await getNextTaskId();
+                const managerId = sessionStorage.getItem('userId');
+                
+                const selectedEmployees = Array.from(document.querySelectorAll('.employee-select:checked'))
+                    .map(checkbox => checkbox.value);
+
+                const taskData = {
+                    _id: taskId,
+                    taskMessage: document.getElementById('taskName').value,
+                    taskDescription: document.getElementById('taskDescription').value,
+                    level: document.getElementById('priorityLevel').value,
+                    deadlineDate: new Date(document.getElementById('dueDate').value).toISOString(),
+                    deadlineTime: document.getElementById('dueTime').value,
+                    emp_ids: selectedEmployees,
+                    status: 'InProgress',
+                    empFlag: null,
+                    manFlag: null,
+                    newTaskId: null,
+                    createdBy: managerId
+                };
+
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(taskData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Task created successfully!');
+                    document.getElementById('taskModal').style.display = 'none';
+                    document.getElementById('taskForm').reset();
+                    // Refresh the task list if needed
+                    filterTasks('inProgress');
+                } else {
+                    alert('Failed to create task: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error creating task:', error);
+                alert('Error creating task');
+            }
+        });
+
+        // Add approve task function
+        async function approveTask(taskId) {
+            try {
+                const response = await fetch('/api/tasks/update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ taskId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Task approved successfully!');
+                    // Refresh the task list
+                    filterTasks('review');
+                } else {
+                    alert('Failed to approve task: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error approving task:', error);
+                alert('Error approving task');
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
+
