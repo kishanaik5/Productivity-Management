@@ -25,6 +25,8 @@
             --task-overview-bg: #ffffff;
             --task-filter-bg: #f0f2f5;
             --task-filter-active: #1a73e8;
+            --section-bg: #ffffff;
+            --task-section-bg: #ffffff;
         }
 
         :root[data-theme="dark"] {
@@ -44,6 +46,8 @@
             --task-overview-bg: #2d2d2d;
             --task-filter-bg: #363636;
             --task-filter-active: #4a9eff;
+            --section-bg: #2d2d2d;
+            --task-section-bg: #2d2d2d;
         }
 
         /* Update header section */
@@ -512,6 +516,74 @@
         .tasks-overview h2 {
             color: var(--text-color);
             margin-bottom: 15px;
+        }
+
+        /* Update the departments container */
+        .departments-container {
+            background-color: var(--section-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update task overview container */
+        .task-overview-container {
+            background-color: var(--task-section-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update any white background sections */
+        .white-section {
+            background-color: var(--section-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update task filter buttons container */
+        .task-filters {
+            background-color: var(--section-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Make sure all content boxes use the dark theme */
+        .content-box,
+        .department-section,
+        .task-section,
+        .employee-section {
+            background-color: var(--section-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update section headers */
+        .section-title {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        /* Ensure table headers are properly styled */
+        .table-header {
+            background-color: var(--table-header-bg);
+            color: var(--text-color);
+        }
+
+        /* Update any remaining white backgrounds */
+        [class*="-container"],
+        [class*="-section"],
+        [class*="-box"] {
+            background-color: var(--section-bg);
+            color: var(--text-color);
         }
     </style>
 </head>
