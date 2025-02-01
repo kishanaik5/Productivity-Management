@@ -219,9 +219,54 @@
         .task-table tr {
             height: 60px; /* Fixed height for rows */
         }
+
+        /* Add these toast styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-in-out, fadeOut 0.3s ease-in-out 1.7s;
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="toast-container" id="toastContainer"></div>
     <div class="dashboard-container">
         <header class="dashboard-header">
             <h1>Manager Dashboard</h1>
@@ -704,24 +749,23 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    alert('Task created successfully!');
+                    showToast('Task created successfully!');
                     document.getElementById('taskModal').style.display = 'none';
                     document.getElementById('taskForm').reset();
-                    // Refresh the task list if needed
-                    filterTasks('inProgress');
+                    // Page will refresh automatically after toast
                 } else {
-                    alert('Failed to create task: ' + (result.message || 'Unknown error'));
+                    showToast('Failed to create task: ' + (result.message || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error creating task:', error);
-                alert('Error creating task');
+                showToast('Error creating task');
             }
         });
 
         // Update the approveTask function
         async function approveTask(taskId) {
             try {
-                const response = await fetch('/api/tasks/update-status', {
+                const response = await fetch('/api/tasks/approve', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -735,15 +779,14 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    alert('Task approved successfully!');
-                    // Refresh the task list
-                    filterTasks('review');
+                    showToast('Task approved successfully!');
+                    // Page will refresh automatically after toast
                 } else {
-                    alert('Failed to approve task: ' + data.message);
+                    showToast('Failed to approve task: ' + data.message);
                 }
             } catch (error) {
                 console.error('Error approving task:', error);
-                alert('Error approving task');
+                showToast('Error approving task');
             }
         }
 
@@ -838,6 +881,22 @@
         function closeTaskDetailsModal() {
             const modal = document.getElementById('taskDetailsModal');
             modal.style.display = 'none';
+        }
+
+        // Add the showToast function
+        function showToast(message) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+
+            // Remove the toast and refresh page after animation
+            setTimeout(() => {
+                toast.remove();
+                location.reload();
+            }, 2000);
         }
     </script>
 </body>
