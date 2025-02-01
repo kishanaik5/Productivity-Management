@@ -21,6 +21,10 @@
             --department-active-bg: #1a73e8;
             --content-box-bg: #ffffff;
             --table-header-bg: #f8f9fa;
+            --department-list-bg: #ffffff;
+            --task-overview-bg: #ffffff;
+            --task-filter-bg: #f0f2f5;
+            --task-filter-active: #1a73e8;
         }
 
         :root[data-theme="dark"] {
@@ -36,6 +40,10 @@
             --department-active-bg: #4a9eff;
             --content-box-bg: #2d2d2d;
             --table-header-bg: #363636;
+            --department-list-bg: #2d2d2d;
+            --task-overview-bg: #2d2d2d;
+            --task-filter-bg: #363636;
+            --task-filter-active: #4a9eff;
         }
 
         /* Update header section */
@@ -188,13 +196,23 @@
 
         /* Update task filter buttons */
         .task-filter-btn {
-            background-color: var(--secondary-bg);
+            background-color: var(--task-filter-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            margin-right: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-filter-btn:hover {
+            background-color: var(--task-filter-active);
+            color: white;
         }
 
         .task-filter-btn.active {
-            background-color: var(--primary-color);
+            background-color: var(--task-filter-active);
             color: white;
         }
 
@@ -248,33 +266,25 @@
             margin-bottom: 15px;
         }
 
-        .task-filter-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background-color: var(--background-color);
-            transition: all 0.3s ease;
-        }
-
-        .task-filter-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
         .task-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 15px;
+            background-color: var(--content-box-bg);
         }
 
-        .task-table th,
-        .task-table td {
+        .task-table th {
+            background-color: var(--table-header-bg);
+            color: var(--text-color);
             padding: 12px;
             text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .task-table td {
+            padding: 12px;
             border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            line-height: 1.5;
-            white-space: nowrap;
+            color: var(--text-color);
         }
 
         .content-section {
@@ -299,20 +309,6 @@
 
         .action-btn:hover {
             background-color: var(--secondary-color);
-        }
-
-        .task-filter-btn {
-            padding: 8px 16px;
-            margin: 0 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .task-filter-btn.active {
-            background-color: var(--primary-color);
-            color: white;
         }
 
         .create-task-btn {
@@ -494,6 +490,28 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Update department list container */
+        .departments-list {
+            background-color: var(--department-list-bg);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update task overview section */
+        .tasks-overview {
+            background-color: var(--task-overview-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .tasks-overview h2 {
+            color: var(--text-color);
+            margin-bottom: 15px;
         }
     </style>
 </head>
