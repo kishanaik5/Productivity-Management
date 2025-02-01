@@ -237,7 +237,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
-            animation: slideIn 0.3s ease-in-out, fadeOut 0.3s ease-in-out 1.7s;
+            animation: slideIn 0.3s ease-in-out, fadeOut 0.3s ease-in-out 3.7s;
             opacity: 0;
             transform: translateX(100%);
         }
@@ -762,18 +762,16 @@
             }
         });
 
-        // Update the approveTask function
+        // Update the approveTask function with the correct endpoint
         async function approveTask(taskId) {
             try {
-                const response = await fetch('/api/tasks/approve', {
+                const response = await fetch('/api/tasks/update-status', {  // Corrected endpoint
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        taskId,
-                        manFlag: true,
-                        status: 'Success'
+                        taskId
                     })
                 });
 
@@ -892,11 +890,11 @@
             
             toastContainer.appendChild(toast);
 
-            // Remove the toast and refresh page after animation
+            // Changed to 4000ms (4 seconds)
             setTimeout(() => {
                 toast.remove();
                 location.reload();
-            }, 2000);
+            }, 4000);
         }
     </script>
 </body>
