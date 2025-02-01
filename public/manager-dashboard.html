@@ -435,8 +435,11 @@
                     // Display departments
                     if (data.departments && data.departments.length > 0) {
                         console.log('Departments found:', data.departments);
+                        // If no department is stored, store the first one
+                        if (!sessionStorage.getItem('activeDepartment')) {
+                            sessionStorage.setItem('activeDepartment', data.departments[0]);
+                        }
                         showDepartments(data.departments);
-                        loadEmployees(data.departments[0]);
                     } else {
                         console.log('No departments found');
                         const departmentsList = document.getElementById('departmentsList');
@@ -462,15 +465,25 @@
             }
 
             departmentsList.innerHTML = '';
+            
+            // Get the stored active department or use the first one
+            const activeDepartment = sessionStorage.getItem('activeDepartment') || departments[0];
+
             departments.forEach(dept => {
                 const deptDiv = document.createElement('div');
                 deptDiv.className = 'department-item';
                 deptDiv.textContent = dept;
+                // Add active class if this is the active department
+                if (dept === activeDepartment) {
+                    deptDiv.classList.add('active');
+                }
                 deptDiv.onclick = () => {
                     console.log('Department clicked:', dept);
                     document.querySelectorAll('.department-item').forEach(item => 
                         item.classList.remove('active'));
                     deptDiv.classList.add('active');
+                    // Store the selected department
+                    sessionStorage.setItem('activeDepartment', dept);
                     loadEmployees(dept);
                     setTimeout(() => {
                         location.reload();
@@ -479,9 +492,8 @@
                 departmentsList.appendChild(deptDiv);
             });
 
-            if (departments.length > 0) {
-                departmentsList.firstChild.classList.add('active');
-            }
+            // Load employees for the active department
+            loadEmployees(activeDepartment);
         }
 
         function searchEmployees() {
