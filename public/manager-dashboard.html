@@ -580,23 +580,12 @@
                     </td>
                     <td>${formattedDate}, ${formattedTime}</td>
                     <td>
-                        <button onclick='viewTaskDetails(${JSON.stringify({
-                            _id: task._id,
-                            taskMessage: task.taskMessage,
-                            taskDescription: task.taskDescription,
-                            level: task.level,
-                            empFlag: task.empFlag,
-                            manFlag: task.manFlag,
-                            deadlineDate: task.deadlineDate,
-                            deadlineTime: task.deadlineTime,
-                            emp_ids: task.emp_ids,
-                            status: task.status
-                        })})' class="action-btn">
+                        <button onclick='viewTaskDetails(${JSON.stringify(task)})' class="action-btn">
                             View Details
                         </button>
-                        ${status === 'review' ? 
+                        ${filter === 'review' ? 
                             `<button onclick="approveTask('${task._id}')" class="action-btn">
-                                Approve Task
+                                Approve
                             </button>` : 
                             ''}
                     </td>
@@ -722,7 +711,7 @@
             }
         });
 
-        // Add approve task function
+        // Update the approveTask function
         async function approveTask(taskId) {
             try {
                 const response = await fetch('/api/tasks/update-status', {
@@ -730,7 +719,11 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ taskId })
+                    body: JSON.stringify({ 
+                        taskId,
+                        manFlag: true,
+                        status: 'Success'
+                    })
                 });
 
                 const data = await response.json();
