@@ -194,6 +194,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            margin-left: 8px;
         }
 
         .status-badge.overdue {
@@ -209,7 +210,12 @@
         .task-status-cell {
             display: flex;
             align-items: center;
-            gap: 8px;
+            min-height: 100%;
+        }
+
+        .task-table td {
+            vertical-align: middle;
+            height: 50px;
         }
     </style>
 </head>
