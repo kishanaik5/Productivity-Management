@@ -397,6 +397,24 @@ app.get('/api/test-db', async (req, res) => {
     }
 });
 
+// Add this new endpoint for fetching all employees
+app.get('/api/all-employees', async (req, res) => {
+    console.log('Fetching all employees');
+    
+    try {
+        const employees = await Employee.find({
+            role: "employee"  // Only get employees, not managers
+        }).select('name designation departments _id');
+
+        console.log('Found all employees:', employees);
+        
+        res.json({ success: true, employees });
+    } catch (error) {
+        console.error('Error fetching all employees:', error);
+        res.status(500).json({ success: false, message: 'Error fetching all employees' });
+    }
+});
+
 // Static file middleware should come AFTER API routes
 app.use(express.static(path.join(__dirname, 'public')));
 
