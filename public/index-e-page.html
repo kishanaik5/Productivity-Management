@@ -630,6 +630,21 @@
                                             task.level.toLowerCase() === 'medium' ? 'priority-medium' : 
                                             'priority-low';
 
+                        // Format the date
+                        const dueDate = new Date(task.deadlineDate);
+                        const formattedDate = dueDate.toLocaleDateString();
+
+                        // Format time from deadlineTime attribute
+                        const formatTime = (timeStr) => {
+                            const [hours, minutes] = timeStr.split(':');
+                            const hour = parseInt(hours);
+                            const ampm = hour >= 12 ? 'PM' : 'AM';
+                            const hour12 = hour % 12 || 12;
+                            return `${hour12}:${minutes} ${ampm}`;
+                        };
+
+                        const formattedTime = formatTime(task.deadlineTime);
+
                         tr.innerHTML = `
                             <td><span class="${priorityClass}">${task.level}</span></td>
                             <td class="task-description" onclick="showTaskModal(${JSON.stringify(task).replace(/"/g, '&quot;')})">
@@ -637,7 +652,7 @@
                                     <div class="task-message-content">${task.taskMessage}</div>
                                 </div>
                             </td>
-                            <td>${new Date(task.deadlineDate).toLocaleString()}</td>
+                            <td>${formattedDate}, ${formattedTime}</td>
                             <td>
                                 ${isCompleted ? 
                                     '<span class="completed-status">✓ Completed</span>' : 
@@ -765,13 +780,21 @@
             const overlay = document.getElementById('modalOverlay');
             const modalBody = document.getElementById('modalBody');
 
-            // Calculate time remaining
-            const deadline = new Date(task.deadlineDate);
-            const now = new Date();
-            const timeRemaining = deadline - now;
-            const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
-            
-            const isUrgent = daysRemaining <= 2;
+            // Format the date
+            const dueDate = new Date(task.deadlineDate);
+            const formattedDate = dueDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Format time from deadlineTime attribute
+            const [hours, minutes] = task.deadlineTime.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            const formattedTime = `${hour12}:${minutes} ${ampm}`;
 
             modalBody.innerHTML = `
                 <div class="task-info-grid">
@@ -790,23 +813,8 @@
                         </div>
                     </div>
                     <div class="task-info-item">
-                        <div class="info-label">Due Date</div>
-                        <div class="info-value">
-                            ${new Date(task.deadlineDate).toLocaleString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            }) + ' ' + task.deadlineTime.split(':').map((n, i) => {
-                                if (i === 0) {
-                                    const hour = parseInt(n);
-                                    return (hour % 12 || 12) + ':';
-                                }
-                                return n + ' ' + (parseInt(task.deadlineTime) >= 12 ? 'PM' : 'AM');
-                            }).join('')
-
-                            })}
-                        </div>
+                        <div class="info-label">Due Date & Time</div>
+                        <div class="info-value">${formattedDate}, ${formattedTime}</div>
                     </div>
                     <div class="task-info-item">
                         <div class="info-label">Task ID</div>
@@ -818,20 +826,10 @@
                     <div class="info-label">Task Description</div>
                     <div class="info-value">${task.taskDescription}</div>
                 </div>
-
-                <div class="time-remaining ${isUrgent ? 'urgent' : ''}">
-                    <span class="time-icon">⏰</span>
-                    <span>
-                        ${daysRemaining > 0 
-                            ? `${daysRemaining} day${daysRemaining === 1 ? '' : 's'} remaining` 
-                            : 'Deadline passed'}
-                    </span>
-                </div>
             `;
 
             modal.style.display = 'block';
             overlay.style.display = 'block';
-            modal.style.animation = 'modalFadeIn 0.3s ease-out forwards';
         }
 
         function closeTaskModal() {
