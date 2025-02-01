@@ -20,6 +20,9 @@
             --table-bg: #ffffff;
             --input-bg: #ffffff;
             --input-text: #333333;
+            --department-bg: #ffffff;
+            --department-active-bg: #1a73e8;
+            --content-box-bg: #ffffff;
         }
 
         :root[data-theme="dark"] {
@@ -34,6 +37,9 @@
             --table-bg: #2d2d2d;
             --input-bg: #3d3d3d;
             --input-text: #ffffff;
+            --department-bg: #2d2d2d;
+            --department-active-bg: #4a9eff;
+            --content-box-bg: #2d2d2d;
         }
 
         /* Update component styles to use variables */
@@ -62,6 +68,9 @@
             background-color: var(--input-bg);
             color: var(--input-text);
             border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 300px;
         }
 
         .search-input::placeholder {
@@ -84,13 +93,23 @@
         }
 
         .department-item {
-            background-color: var(--secondary-bg);
+            background-color: var(--department-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
+            padding: 12px;
+            margin: 4px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .department-item:hover {
+            background-color: var(--department-active-bg);
+            color: white;
         }
 
         .department-item.active {
-            background-color: var(--primary-color);
+            background-color: var(--department-active-bg);
             color: white;
         }
 
@@ -195,10 +214,12 @@
         }
 
         .content-section {
-            background: white;
-            padding: 20px;
+            background-color: var(--content-box-bg);
+            color: var(--text-color);
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: var(--card-shadow);
         }
 
         .action-btn {
@@ -392,6 +413,32 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
+        }
+
+        /* Update the white container backgrounds */
+        .dashboard-container > div {
+            background-color: var(--content-box-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Update table styling */
+        .employee-table,
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--content-box-bg);
+        }
+
+        .employee-table th,
+        .employee-table td,
+        .task-table th,
+        .task-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
     </style>
 </head>
