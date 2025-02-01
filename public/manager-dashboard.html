@@ -472,6 +472,9 @@
                         item.classList.remove('active'));
                     deptDiv.classList.add('active');
                     loadEmployees(dept);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 100);
                 };
                 departmentsList.appendChild(deptDiv);
             });
