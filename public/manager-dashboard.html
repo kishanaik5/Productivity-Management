@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="manager-dashboard-css.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Add theme variables */
+        /* Update theme variables with more specific colors */
         :root[data-theme="light"] {
             --primary-bg: #f0f2f5;
             --secondary-bg: #ffffff;
@@ -17,6 +17,9 @@
             --secondary-color: #155ab9;
             --header-bg: #ffffff;
             --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --table-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-text: #333333;
         }
 
         :root[data-theme="dark"] {
@@ -28,9 +31,12 @@
             --secondary-color: #77b6ff;
             --header-bg: #2d2d2d;
             --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --table-bg: #2d2d2d;
+            --input-bg: #3d3d3d;
+            --input-text: #ffffff;
         }
 
-        /* Update existing elements to use these variables */
+        /* Update component styles to use variables */
         body {
             background-color: var(--primary-bg);
             color: var(--text-color);
@@ -38,12 +44,82 @@
 
         .dashboard-header {
             background-color: var(--header-bg);
+            color: var(--text-color);
         }
 
         .content-section, 
-        .task-section,
+        .task-section {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+        }
+
         .modal-content {
             background-color: var(--secondary-bg);
+            color: var(--text-color);
+        }
+
+        .search-input {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .employee-table,
+        .task-table {
+            background-color: var(--table-bg);
+            color: var(--text-color);
+        }
+
+        .employee-table th,
+        .employee-table td,
+        .task-table th,
+        .task-table td {
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .department-item {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .department-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Update modal styles */
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Update task filter buttons */
+        .task-filter-btn {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .task-filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Update selected employees section in modal */
+        .selected-employees {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
         }
 
         /* Add theme switch button styles */
@@ -73,14 +149,6 @@
         .search-container {
             margin: 10px 0;
             padding: 10px;
-        }
-
-        .search-input {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 250px;
-            font-size: 14px;
         }
 
         .task-section {
@@ -1036,958 +1104,6 @@
             } else {
                 button.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode</span>';
             }
-        }
-    </script>
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manager Dashboard</title>
-    <link rel="stylesheet" href="manager-dashboard-css.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        /* Additional styles for new features */
-        .search-container {
-            margin: 10px 0;
-            padding: 10px;
-        }
-
-        .search-input {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 250px;
-            font-size: 14px;
-        }
-
-        .task-section {
-            margin-top: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .task-filter-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background-color: var(--background-color);
-            transition: all 0.3s ease;
-        }
-
-        .task-filter-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .task-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .task-table th,
-        .task-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            line-height: 1.5;
-            white-space: nowrap;
-        }
-
-        .content-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            background-color: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            margin: 2px;
-            vertical-align: middle;
-        }
-
-        .action-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .task-filter-btn {
-            padding: 8px 16px;
-            margin: 0 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .task-filter-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .create-task-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: none; /* Initially hidden */
-        }
-
-        .create-task-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            position: relative;
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            width: 60%;
-            border-radius: 8px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .modal-form input,
-        .modal-form select,
-        .modal-form textarea {
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        .selected-employees {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 4px;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .logout-btn {
-            padding: 10px 20px;
-            background-color: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #b91c1c;
-            transform: translateY(-1px);
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        .status-badge.overdue {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
-
-        .status-badge.failed {
-            background-color: #7f1d1d;
-            color: white;
-        }
-
-        .task-status-cell {
-            vertical-align: middle;
-            padding: 12px;
-        }
-
-        .task-table tr {
-            height: 60px; /* Fixed height for rows */
-        }
-
-        /* Add these toast styles */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .toast {
-            background-color: #4CAF50;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            animation: slideIn 2.0s ease-in-out, fadeOut 2.0s ease-in-out 0s;
-            opacity: 0;
-            transform: translateX(100%);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="toast-container" id="toastContainer"></div>
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <h1>Manager Dashboard</h1>
-            <div class="user-info">
-                <div class="search-container">
-                    <input type="text" 
-                           class="search-input" 
-                           placeholder="Search employees or designations..."
-                           id="searchInput"
-                           onkeyup="searchEmployees()">
-                </div>
-                <span id="managerName"></span>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-
-        <div class="dashboard-content">
-            <!-- Left Column -->
-            <div class="left-column">
-                <!-- Departments Section -->
-                <div class="department-section">
-                    <h2>Your Departments</h2>
-                    <div id="departmentsList" class="departments-list">
-                        <!-- Departments populated here -->
-                    </div>
-                </div>
-
-                <!-- Tasks Navigation Section -->
-                <div class="task-section">
-                    <h2>Tasks Overview</h2>
-                    <div class="task-filters">
-                        <button class="task-filter-btn" onclick="filterTasks('completed')">Completed</button>
-                        <button class="task-filter-btn" onclick="filterTasks('review')">Review</button>
-                        <button class="task-filter-btn" onclick="filterTasks('inProgress')">In Progress</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column - Toggleable Content -->
-            <div class="right-column">
-                <!-- Employee Section -->
-                <div id="employeeSection" class="content-section">
-                    <h2>Department Employees</h2>
-                    <table class="employee-table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Name</th>
-                                <th>Designation</th>
-                                <th>Departments</th>
-                            </tr>
-                        </thead>
-                        <tbody id="employeeList">
-                            <!-- Employees populated here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Task Details Section -->
-                <div id="taskSection" class="content-section" style="display: none;">
-                    <h2>Task Details</h2>
-                    <table class="task-table">
-                        <thead>
-                            <tr>
-                                <th>Task Name</th>
-                                <th>Assigned To</th>
-                                <th>Status</th>
-                                <th>Due Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="taskList">
-                            <!-- Tasks populated here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <button id="createTaskBtn" class="create-task-btn" onclick="createTask()" style="display: none;">
-        Create Task +
-    </button>
-
-    <div id="taskModal" class="modal">
-        <div class="modal-content">
-            <h2>Create New Task</h2>
-            <form id="taskForm" class="modal-form">
-                <div>
-                    <label for="taskName">Task Name:</label>
-                    <input type="text" id="taskName" required>
-                </div>
-                <div>
-                    <label for="taskDescription">Task Description:</label>
-                    <textarea id="taskDescription" rows="4" required></textarea>
-                </div>
-                <div>
-                    <label for="priorityLevel">Priority Level:</label>
-                    <select id="priorityLevel" required>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="dueDate">Due Date:</label>
-                    <input type="date" id="dueDate" required>
-                </div>
-                <div>
-                    <label for="dueTime">Due Time:</label>
-                    <input type="time" id="dueTime" required>
-                </div>
-                <div class="selected-employees">
-                    <h3>Selected Employees:</h3>
-                    <div id="selectedEmployeesList"></div>
-                </div>
-                <button type="submit" class="action-btn">Confirm</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Task Details Modal -->
-    <div id="taskDetailsModal" class="modal">
-        <div class="modal-content">
-            <h2>Task Details</h2>
-            <div id="taskDetailsContent"></div>
-            <button class="action-btn" onclick="closeTaskDetailsModal()">Close</button>
-        </div>
-    </div>
-
-    <script>
-        let currentEmployees = []; // Store current employees for searching
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('Page loaded, checking for userId');
-            const userId = sessionStorage.getItem('userId');
-            console.log('UserId from session:', userId);
-
-            if (!userId) {
-                console.log('No userId found, redirecting to login');
-                window.location.href = '/index3.html';
-                return;
-            }
-            await loadManagerData(userId);
-        });
-
-        async function loadManagerData(userId) {
-            try {
-                console.log('Fetching manager data for userId:', userId);
-                const response = await fetch(`/api/manager-info/${userId}`);
-                const data = await response.json();
-                console.log('Manager data received:', data);
-                
-                if (data.success) {
-                    // Display manager name
-                    const managerName = document.getElementById('managerName');
-                    if (managerName) {
-                        managerName.textContent = data.name;
-                        console.log('Manager name set:', data.name);
-                    } else {
-                        console.error('managerName element not found');
-                    }
-                    
-                    // Display departments
-                    if (data.departments && data.departments.length > 0) {
-                        console.log('Departments found:', data.departments);
-                        // If no department is stored, default to "All Departments"
-                        if (!sessionStorage.getItem('activeDepartment')) {
-                            sessionStorage.setItem('activeDepartment', 'All Departments');
-                        }
-                        showDepartments(data.departments);
-                    } else {
-                        console.log('No departments found');
-                        const departmentsList = document.getElementById('departmentsList');
-                        if (departmentsList) {
-                            departmentsList.innerHTML = '<div class="department-item">No departments assigned</div>';
-                        }
-                    }
-                } else {
-                    console.error('Failed to load manager data:', data.message);
-                }
-            } catch (error) {
-                console.error('Error in loadManagerData:', error);
-            }
-        }
-
-        function showDepartments(departments) {
-            console.log('Showing departments:', departments);
-            const departmentsList = document.getElementById('departmentsList');
-            
-            if (!departmentsList) {
-                console.error('departmentsList element not found');
-                return;
-            }
-
-            departmentsList.innerHTML = '';
-            
-            // Get the stored active department or use the first one
-            const activeDepartment = sessionStorage.getItem('activeDepartment') || 'All Departments';
-
-            // Add "All Departments" option first
-            const allDeptDiv = document.createElement('div');
-            allDeptDiv.className = 'department-item';
-            allDeptDiv.textContent = 'All Departments';
-            if (activeDepartment === 'All Departments') {
-                allDeptDiv.classList.add('active');
-            }
-            allDeptDiv.onclick = async () => {
-                document.querySelectorAll('.department-item').forEach(item => 
-                    item.classList.remove('active'));
-                allDeptDiv.classList.add('active');
-                sessionStorage.setItem('activeDepartment', 'All Departments');
-                
-                document.getElementById('employeeSection').style.display = 'block';
-                document.getElementById('taskSection').style.display = 'none';
-                
-                // Load all employees
-                await loadEmployees('all');
-            };
-            departmentsList.appendChild(allDeptDiv);
-
-            // Add individual departments
-            departments.forEach(dept => {
-                const deptDiv = document.createElement('div');
-                deptDiv.className = 'department-item';
-                deptDiv.textContent = dept;
-                if (dept === activeDepartment) {
-                    deptDiv.classList.add('active');
-                }
-                deptDiv.onclick = async () => {
-                    console.log('Department clicked:', dept);
-                    document.querySelectorAll('.department-item').forEach(item => 
-                        item.classList.remove('active'));
-                    deptDiv.classList.add('active');
-                    sessionStorage.setItem('activeDepartment', dept);
-                    
-                    document.getElementById('employeeSection').style.display = 'block';
-                    document.getElementById('taskSection').style.display = 'none';
-                    
-                    await loadEmployees(dept);
-                };
-                departmentsList.appendChild(deptDiv);
-            });
-
-            // Load initial employees based on active department
-            if (activeDepartment === 'All Departments') {
-                loadEmployees('all');
-            } else {
-                loadEmployees(activeDepartment);
-            }
-        }
-
-        function searchEmployees() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const filteredEmployees = currentEmployees.filter(employee => 
-                employee.name.toLowerCase().includes(searchText) ||
-                employee.designation.toLowerCase().includes(searchText)
-            );
-            displayEmployees(filteredEmployees);
-        }
-
-        async function loadEmployees(department) {
-            try {
-                console.log('Loading employees for department:', department);
-                const endpoint = department === 'all' 
-                    ? '/api/all-employees'  // New endpoint for all employees
-                    : `/api/employees-by-departments?departments=${department}`;
-                
-                const response = await fetch(endpoint);
-                const data = await response.json();
-                console.log('Employee data received:', data);
-
-                if (data.success) {
-                    displayEmployees(data.employees);
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) {
-                        searchInput.value = '';
-                    }
-                } else {
-                    console.error('Failed to load employees:', data.message);
-                }
-            } catch (error) {
-                console.error('Error in loadEmployees:', error);
-            }
-        }
-
-        function displayEmployees(employees) {
-            console.log('Displaying employees:', employees);
-            currentEmployees = employees;
-            const employeeList = document.getElementById('employeeList');
-            
-            if (!employeeList) {
-                console.error('employeeList element not found');
-                return;
-            }
-
-            employeeList.innerHTML = '';
-
-            if (employees.length === 0) {
-                employeeList.innerHTML = '<tr><td colspan="4">No employees found</td></tr>';
-                return;
-            }
-
-            employees.forEach(employee => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="checkbox" class="employee-select" value="${employee._id}" 
-                        data-name="${employee.name}" onchange="updateCreateTaskButton()"></td>
-                    <td>${employee.name}</td>
-                    <td>${employee.designation}</td>
-                    <td>${employee.departments.join(', ')}</td>
-                `;
-                employeeList.appendChild(row);
-            });
-
-            addSelectAllButton();
-            updateCreateTaskButton();
-        }
-
-        async function filterTasks(filter) {
-            toggleSection('task');
-            
-            document.querySelectorAll('.task-filter-btn').forEach(btn => 
-                btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            try {
-                const managerId = sessionStorage.getItem('userId');
-                const response = await fetch(`/api/tasks/${filter}?managerId=${managerId}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    displayTasks(data.tasks, filter);
-                }
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        }
-
-        function toggleSection(section) {
-            const employeeSection = document.getElementById('employeeSection');
-            const taskSection = document.getElementById('taskSection');
-
-            if (section === 'employee') {
-                employeeSection.style.display = 'block';
-                taskSection.style.display = 'none';
-            } else {
-                employeeSection.style.display = 'none';
-                taskSection.style.display = 'block';
-            }
-        }
-
-        function displayTasks(tasks, filter) {
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = '';
-
-            // Filter tasks based on status
-            let filteredTasks = tasks;
-            switch (filter) {
-                case 'completed':
-                    filteredTasks = tasks.filter(task => task.status === 'Success');
-                    break;
-                case 'inProgress':
-                    filteredTasks = tasks.filter(task => !task.empFlag && !task.manFlag);
-                    break;
-                case 'review':
-                    filteredTasks = tasks.filter(task => task.empFlag && !task.manFlag);
-                    break;
-                case 'failed':
-                    filteredTasks = tasks.filter(task => {
-                        const status = checkTaskStatus(task);
-                        return status === 'Failed';
-                    });
-                    break;
-            }
-
-            if (filteredTasks.length === 0) {
-                taskList.innerHTML = '<tr><td colspan="5">No tasks found</td></tr>';
-                return;
-            }
-
-            filteredTasks.forEach(task => {
-                const status = checkTaskStatus(task);
-                const row = document.createElement('tr');
-                
-                // Format the date and time properly
-                const dueDate = new Date(task.deadlineDate);
-                const formattedDate = dueDate.toLocaleDateString();
-                
-                // Format time from 24-hour to 12-hour format
-                const formatTime = (timeStr) => {
-                    const [hours, minutes] = timeStr.split(':');
-                    const hour = parseInt(hours);
-                    const ampm = hour >= 12 ? 'PM' : 'AM';
-                    const hour12 = hour % 12 || 12;
-                    return `${hour12}:${minutes} ${ampm}`;
-                };
-
-                const formattedTime = formatTime(task.deadlineTime);
-
-                row.innerHTML = `
-                    <td>${task.taskMessage}</td>
-                    <td>${task.emp_ids.join(', ')}</td>
-                    <td>${status}
-                        ${status === 'Overdue' ? 
-                            '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
-                            status === 'Failed' ? 
-                            '<span class="status-badge failed">❌ Failed</span>' : 
-                            ''}
-                    </td>
-                    <td>${formattedDate}, ${formattedTime}</td>
-                    <td>
-                        <button onclick='viewTaskDetails(${JSON.stringify(task)})' class="action-btn">
-                            View Details
-                        </button>
-                        ${filter === 'review' ? 
-                            `<button onclick="approveTask('${task._id}')" class="action-btn">
-                                Approve
-                            </button>` : 
-                            ''}
-                    </td>
-                `;
-                taskList.appendChild(row);
-            });
-        }
-
-        function addSelectAllButton() {
-            const headerRow = document.querySelector('.employee-table thead tr');
-            const selectAllCell = headerRow.querySelector('th:first-child');
-            selectAllCell.innerHTML = `
-                <input type="checkbox" id="selectAll" onclick="toggleSelectAll()">
-            `;
-        }
-
-        function toggleSelectAll() {
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const employeeCheckboxes = document.querySelectorAll('.employee-select');
-            employeeCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
-            });
-            updateCreateTaskButton();
-        }
-
-        function updateCreateTaskButton() {
-            const selectedEmployees = document.querySelectorAll('.employee-select:checked');
-            const createTaskBtn = document.getElementById('createTaskBtn');
-            createTaskBtn.style.display = selectedEmployees.length > 0 ? 'block' : 'none';
-        }
-
-        function createTask() {
-            const modal = document.getElementById('taskModal');
-            const selectedEmployeesList = document.getElementById('selectedEmployeesList');
-            selectedEmployeesList.innerHTML = '';
-
-            const selectedEmployees = document.querySelectorAll('.employee-select:checked');
-            selectedEmployees.forEach(emp => {
-                const empName = emp.getAttribute('data-name');
-                const div = document.createElement('div');
-                div.textContent = empName;
-                selectedEmployeesList.appendChild(div);
-            });
-
-            modal.style.display = 'block';
-        }
-
-        function logout() {
-            console.log('Logging out');
-            sessionStorage.clear();
-            window.location.href = '/index.html';
-        }
-
-        // Add this function to get the next task ID
-        async function getNextTaskId() {
-            try {
-                const response = await fetch('/api/tasks/last-id');
-                const data = await response.json();
-                
-                if (data.success && data.lastId) {
-                    // Extract the numeric part and increment
-                    const numericPart = parseInt(data.lastId.substring(1));
-                    const nextNum = numericPart + 1;
-                    // Format with leading zeros (T001, T002, etc.)
-                    return `T${String(nextNum).padStart(3, '0')}`;
-                } else {
-                    // If no existing tasks, start with T001
-                    return 'T001';
-                }
-            } catch (error) {
-                console.error('Error getting next task ID:', error);
-                throw error;
-            }
-        }
-
-        // Modify the form submission handler
-        document.getElementById('taskForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            try {
-                const taskId = await getNextTaskId();
-                const managerId = sessionStorage.getItem('userId');
-                
-                const selectedEmployees = Array.from(document.querySelectorAll('.employee-select:checked'))
-                    .map(checkbox => checkbox.value);
-
-                const taskData = {
-                    _id: taskId,
-                    taskMessage: document.getElementById('taskName').value,
-                    taskDescription: document.getElementById('taskDescription').value,
-                    level: document.getElementById('priorityLevel').value,
-                    deadlineDate: new Date(document.getElementById('dueDate').value).toISOString(),
-                    deadlineTime: document.getElementById('dueTime').value,
-                    emp_ids: selectedEmployees,
-                    status: 'InProgress',
-                    empFlag: null,
-                    manFlag: null,
-                    newTaskId: null,
-                    createdBy: managerId
-                };
-
-                const response = await fetch('/api/tasks', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(taskData)
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    showToast('Task created successfully!');
-                    document.getElementById('taskModal').style.display = 'none';
-                    document.getElementById('taskForm').reset();
-                    // Page will refresh automatically after toast
-                } else {
-                    showToast('Failed to create task: ' + (result.message || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error creating task:', error);
-                showToast('Error creating task');
-            }
-        });
-
-        // Update the approveTask function with the correct endpoint
-        async function approveTask(taskId) {
-            try {
-                const response = await fetch('/api/tasks/update-status', {  // Corrected endpoint
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        taskId
-                    })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    showToast('Task approved successfully!');
-                    // Page will refresh automatically after toast
-                } else {
-                    showToast('Failed to approve task: ' + data.message);
-                }
-            } catch (error) {
-                console.error('Error approving task:', error);
-                showToast('Error approving task');
-            }
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('taskModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        };
-
-        // Check task status
-        function checkTaskStatus(task) {
-            const now = new Date();
-            const dueDate = new Date(task.deadlineDate);
-            const [hours, minutes] = task.deadlineTime.split(':');
-            dueDate.setHours(parseInt(hours), parseInt(minutes));
-
-            // Check if task is failed (past due date)
-            if (now > dueDate && (!task.empFlag || !task.manFlag)) {
-                return 'Failed';
-            }
-
-            // Check if task is overdue (same day, past time)
-            if (now.toDateString() === dueDate.toDateString() && 
-                now > dueDate && task.status !== 'Success') {
-                return 'Overdue';
-            }
-
-            return task.status;
-        }
-
-        // View task details
-        function viewTaskDetails(task) {
-            const status = checkTaskStatus(task);
-            const modal = document.getElementById('taskDetailsModal');
-            const content = document.getElementById('taskDetailsContent');
-            
-            const dueDate = new Date(task.deadlineDate);
-            const formattedDate = dueDate.toLocaleDateString();
-            
-            // Format time
-            const [hours, minutes] = task.deadlineTime.split(':');
-            const hour = parseInt(hours);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const hour12 = hour % 12 || 12;
-            const formattedTime = `${hour12}:${minutes} ${ampm}`;
-
-            content.innerHTML = `
-                <div class="task-detail-grid">
-                    <div class="detail-item">
-                        <strong>Task ID:</strong>
-                        <p>${task._id}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Task Name:</strong>
-                        <p>${task.taskMessage}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Description:</strong>
-                        <p>${task.taskDescription || 'No description provided'}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Priority Level:</strong>
-                        <p class="priority-${task.level.toLowerCase()}">${task.level}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Status:</strong>
-                        <p class="task-status-cell">
-                            ${status}
-                            ${status === 'Overdue' ? 
-                                '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
-                                status === 'Failed' ? 
-                                '<span class="status-badge failed">❌ Failed</span>' : 
-                                ''}
-                        </p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Due Date & Time:</strong>
-                        <p>${formattedDate}, ${formattedTime}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Assigned To:</strong>
-                        <p>${task.emp_ids.join(', ')}</p>
-                    </div>
-                </div>
-            `;
-
-            modal.style.display = 'block';
-        }
-
-        // Close task details modal
-        function closeTaskDetailsModal() {
-            const modal = document.getElementById('taskDetailsModal');
-            modal.style.display = 'none';
-        }
-
-        // Add the showToast function
-        function showToast(message) {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            
-            toastContainer.appendChild(toast);
-
-            // Changed to 4000ms (4 seconds)
-            setTimeout(() => {
-                toast.remove();
-                location.reload();
-            }, 4000);
         }
     </script>
 </body>
