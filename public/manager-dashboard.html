@@ -477,17 +477,20 @@
                 if (dept === activeDepartment) {
                     deptDiv.classList.add('active');
                 }
-                deptDiv.onclick = () => {
+                deptDiv.onclick = async () => {
                     console.log('Department clicked:', dept);
                     document.querySelectorAll('.department-item').forEach(item => 
                         item.classList.remove('active'));
                     deptDiv.classList.add('active');
                     // Store the selected department
                     sessionStorage.setItem('activeDepartment', dept);
-                    loadEmployees(dept);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 100);
+                    
+                    // Show employee section and hide task section
+                    document.getElementById('employeeSection').style.display = 'block';
+                    document.getElementById('taskSection').style.display = 'none';
+                    
+                    // Refresh only the employee table
+                    await loadEmployees(dept);
                 };
                 departmentsList.appendChild(deptDiv);
             });
@@ -514,6 +517,11 @@
 
                 if (data.success) {
                     displayEmployees(data.employees);
+                    // Clear the search input when switching departments
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.value = '';
+                    }
                 } else {
                     console.error('Failed to load employees:', data.message);
                 }
@@ -552,6 +560,7 @@
             });
 
             addSelectAllButton();
+            updateCreateTaskButton();
         }
 
         async function filterTasks(filter) {
