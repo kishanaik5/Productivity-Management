@@ -27,6 +27,11 @@
             --task-filter-active: #1a73e8;
             --section-bg: #ffffff;
             --task-section-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --modal-header-bg: #f8f9fa;
+            --close-btn-color: #666;
+            --close-btn-hover: #333;
         }
 
         :root[data-theme="dark"] {
@@ -48,6 +53,11 @@
             --task-filter-active: #4a9eff;
             --section-bg: #2d2d2d;
             --task-section-bg: #2d2d2d;
+            --modal-bg: #2d2d2d;
+            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --modal-header-bg: #363636;
+            --close-btn-color: #aaa;
+            --close-btn-hover: #fff;
         }
 
         /* Update header section */
@@ -341,19 +351,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: var(--modal-overlay);
             z-index: 1000;
         }
 
         .modal-content {
             position: relative;
-            background-color: white;
+            background-color: var(--modal-bg);
             margin: 5% auto;
             padding: 20px;
             width: 60%;
             border-radius: 8px;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: var(--card-shadow);
+        }
+
+        .modal-header {
+            background-color: var(--modal-header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .close-btn {
+            color: var(--close-btn-color);
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--close-btn-hover);
         }
 
         .modal-form {
@@ -584,6 +611,64 @@
         [class*="-box"] {
             background-color: var(--section-bg);
             color: var(--text-color);
+        }
+
+        /* Update task details modal specific styles */
+        #taskDetailsModal .modal-content {
+            background-color: var(--modal-bg);
+            color: var(--text-color);
+        }
+
+        .task-detail-grid {
+            background-color: var(--modal-bg);
+            color: var(--text-color);
+        }
+
+        .detail-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+
+        .detail-item strong {
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .detail-item p {
+            color: var(--text-color);
+            margin-top: 5px;
+        }
+
+        /* Update modal buttons */
+        .modal-content button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Update status badges in modal */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .status-badge.overdue {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .status-badge.failed {
+            background-color: #dc3545;
+            color: white;
         }
     </style>
 </head>
