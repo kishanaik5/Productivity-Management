@@ -32,6 +32,10 @@
             --modal-header-bg: #f8f9fa;
             --close-btn-color: #666;
             --close-btn-hover: #333;
+            --selected-employees-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-text: #333333;
+            --modal-input-border: #e0e0e0;
         }
 
         :root[data-theme="dark"] {
@@ -58,6 +62,10 @@
             --modal-header-bg: #363636;
             --close-btn-color: #aaa;
             --close-btn-hover: #fff;
+            --selected-employees-bg: #363636;
+            --input-bg: #363636;
+            --input-text: #ffffff;
+            --modal-input-border: #4a4a4a;
         }
 
         /* Update header section */
@@ -232,9 +240,35 @@
 
         /* Update selected employees section in modal */
         .selected-employees {
-            background-color: var(--secondary-bg);
+            background-color: var(--selected-employees-bg);
             color: var(--text-color);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--modal-input-border);
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .selected-employees h3 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .selected-employees ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .selected-employees li {
+            color: var(--text-color);
+            padding: 5px 0;
+            border-bottom: 1px solid var(--modal-input-border);
+        }
+
+        .selected-employees li:last-child {
+            border-bottom: none;
         }
 
         /* Add theme switch button styles */
@@ -394,13 +428,6 @@
         .modal-form textarea {
             padding: 8px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        .selected-employees {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
             border-radius: 4px;
         }
 
@@ -669,6 +696,48 @@
         .status-badge.failed {
             background-color: #dc3545;
             color: white;
+        }
+
+        /* Update create task modal styles */
+        #taskModal .modal-content {
+            background-color: var(--modal-bg);
+            color: var(--text-color);
+        }
+
+        /* Update form inputs in modal */
+        #taskModal input,
+        #taskModal textarea,
+        #taskModal select {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--modal-input-border);
+            border-radius: 4px;
+            padding: 8px;
+        }
+
+        #taskModal input::placeholder,
+        #taskModal textarea::placeholder {
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        /* Update scrollbar for dark theme */
+        .selected-employees::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .selected-employees::-webkit-scrollbar-track {
+            background: var(--modal-bg);
+            border-radius: 4px;
+        }
+
+        .selected-employees::-webkit-scrollbar-thumb {
+            background: var(--modal-input-border);
+            border-radius: 4px;
+        }
+
+        .selected-employees::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
         }
     </style>
 </head>
