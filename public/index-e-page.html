@@ -591,7 +591,7 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const userId = sessionStorage.getItem("userId");
             const userName = sessionStorage.getItem("userName");
 
@@ -601,14 +601,31 @@
                 return;
             }
 
-            document.getElementById("welcomeMessage").textContent = `Welcome back, ${userName || userId}!`;
-            document.getElementById("currentDate").textContent = new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            loadTasks(userId);
+            try {
+                // Fetch employee details
+                const response = await fetch(`/api/employee/${userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update welcome message with employee name
+                    document.getElementById("welcomeMessage").textContent = `Welcome back, ${data.name}!`;
+                } else {
+                    // Fallback to userId if name fetch fails
+                    document.getElementById("welcomeMessage").textContent = `Welcome back, ${userId}!`;
+                }
+
+                document.getElementById("currentDate").textContent = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                loadTasks(userId);
+            } catch (error) {
+                console.error('Error fetching employee details:', error);
+                // Fallback to userId if request fails
+                document.getElementById("welcomeMessage").textContent = `Welcome back, ${userId}!`;
+            }
         });
 
         async function loadTasks(userId) {
