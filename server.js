@@ -12,7 +12,8 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
 
-const MONGODB_URI = `mongodb+srv://kishanknaik03:${process.env.MONGODB_PASSWORD}@aws1freecluster.pa4wd.mongodb.net/db?retryWrites=true&w=majority&appName=AWS1FreeCluster`;
+const MONGODB_URI = `mongodb+srv://prarthana:${process.env.MONGODB_PASSWORD}@taskmanagercluster.kt4sl.mongodb.net/?retryWrites=true&w=majority&appName=TaskManagerCluster`;
+
 
 // MongoDB Connection
 mongoose
@@ -35,7 +36,7 @@ const employeeSchema = new mongoose.Schema(
         skills: [String],
         designation: String,
     },
-    { collection: 'employeeDB' }
+    { collection: 'db/employeeDB' }
 );
 
 const Employee = mongoose.model('Employee', employeeSchema);
@@ -56,7 +57,7 @@ const taskSchema = new mongoose.Schema(
         newTaskId: String,
         createdBy: String
     },
-    { collection: 'taskAssign' }
+    { collection: 'db/taskAssign' }
 );
 
 const Task = mongoose.model('Task', taskSchema);
