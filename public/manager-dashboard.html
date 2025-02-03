@@ -420,15 +420,117 @@
         .modal-form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .modal-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .modal-form label {
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.9rem;
         }
 
         .modal-form input,
         .modal-form select,
         .modal-form textarea {
+            padding: 10px 12px;
+            border: 1px solid var(--modal-input-border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus,
+        .modal-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+        }
+
+        .modal-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-form select {
+            cursor: pointer;
+        }
+
+        .modal-form button[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .modal-form button[type="submit"]:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .modal-form button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        .selected-employees {
+            background-color: var(--selected-employees-bg);
+            border: 1px solid var(--modal-input-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 5px;
+        }
+
+        .selected-employees h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .selected-employees div {
             padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-bottom: 1px solid var(--modal-input-border);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .selected-employees div:last-child {
+            border-bottom: none;
+        }
+
+        /* Update modal content styles */
+        .modal-content {
+            background-color: var(--modal-bg);
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            margin: 40px auto;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-content h2 {
+            color: var(--text-color);
+            padding: 20px;
+            margin: 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.25rem;
         }
 
         .logout-btn {
@@ -837,15 +939,15 @@
         <div class="modal-content">
             <h2>Create New Task</h2>
             <form id="taskForm" class="modal-form">
-                <div>
+                <div class="form-group">
                     <label for="taskName">Task Name:</label>
                     <input type="text" id="taskName" required>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="taskDescription">Task Description:</label>
                     <textarea id="taskDescription" rows="4" required></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="priorityLevel">Priority Level:</label>
                     <select id="priorityLevel" required>
                         <option value="high">High</option>
@@ -853,19 +955,21 @@
                         <option value="low">Low</option>
                     </select>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="dueDate">Due Date:</label>
                     <input type="date" id="dueDate" required>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="dueTime">Due Time:</label>
                     <input type="time" id="dueTime" required>
                 </div>
-                <div class="selected-employees">
-                    <h3>Selected Employees:</h3>
-                    <div id="selectedEmployeesList"></div>
+                <div class="form-group">
+                    <label>Selected Employees:</label>
+                    <div class="selected-employees">
+                        <div id="selectedEmployeesList"></div>
+                    </div>
                 </div>
-                <button type="submit" class="action-btn">Confirm</button>
+                <button type="submit" class="action-btn">Create Task</button>
             </form>
         </div>
     </div>
