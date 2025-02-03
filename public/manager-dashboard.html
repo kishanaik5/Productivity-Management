@@ -1206,78 +1206,102 @@
             }
         }
 
-        function displayTasks(tasks, filter) {
+        async function displayTasks(tasks, filter) {
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
-            // Filter tasks based on status
-            let filteredTasks = tasks;
-            switch (filter) {
-                case 'completed':
-                    filteredTasks = tasks.filter(task => task.status === 'Success');
-                    break;
-                case 'inProgress':
-                    filteredTasks = tasks.filter(task => !task.empFlag && !task.manFlag);
-                    break;
-                case 'review':
-                    filteredTasks = tasks.filter(task => task.empFlag && !task.manFlag);
-                    break;
-                case 'failed':
-                    filteredTasks = tasks.filter(task => {
-                        const status = checkTaskStatus(task);
-                        return status === 'Failed';
-                    });
-                    break;
-            }
-
-            if (filteredTasks.length === 0) {
-                taskList.innerHTML = '<tr><td colspan="5">No tasks found</td></tr>';
-                return;
-            }
-
-            filteredTasks.forEach(task => {
-                const status = checkTaskStatus(task);
-                const row = document.createElement('tr');
+            // First, fetch all employee data to create an ID to name mapping
+            try {
+                const response = await fetch('/api/all-employees');
+                const data = await response.json();
                 
-                // Format the date and time properly
-                const dueDate = new Date(task.deadlineDate);
-                const formattedDate = dueDate.toLocaleDateString();
-                
-                // Format time from 24-hour to 12-hour format
-                const formatTime = (timeStr) => {
-                    const [hours, minutes] = timeStr.split(':');
-                    const hour = parseInt(hours);
-                    const ampm = hour >= 12 ? 'PM' : 'AM';
-                    const hour12 = hour % 12 || 12;
-                    return `${hour12}:${minutes} ${ampm}`;
-                };
+                if (!data.success) {
+                    console.error('Failed to fetch employee data');
+                    return;
+                }
 
-                const formattedTime = formatTime(task.deadlineTime);
+                // Create a mapping of employee IDs to names
+                const employeeMap = {};
+                data.employees.forEach(emp => {
+                    employeeMap[emp._id] = emp.name;
+                });
 
-                row.innerHTML = `
-                    <td>${task.taskMessage}</td>
-                    <td>${task.emp_ids.join(', ')}</td>
-                    <td>${status}
-                        ${status === 'Overdue' ? 
-                            '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
-                            status === 'Failed' ? 
-                            '<span class="status-badge failed">❌ Failed</span>' : 
-                            ''}
-                    </td>
-                    <td>${formattedDate}, ${formattedTime}</td>
-                    <td>
-                        <button onclick='viewTaskDetails(${JSON.stringify(task)})' class="action-btn">
-                            View Details
-                        </button>
-                        ${filter === 'review' ? 
-                            `<button onclick="approveTask('${task._id}')" class="action-btn">
-                                Approve
-                            </button>` : 
-                            ''}
-                    </td>
-                `;
-                taskList.appendChild(row);
-            });
+                // Filter tasks based on status
+                let filteredTasks = tasks;
+                switch (filter) {
+                    case 'completed':
+                        filteredTasks = tasks.filter(task => task.status === 'Success');
+                        break;
+                    case 'inProgress':
+                        filteredTasks = tasks.filter(task => !task.empFlag && !task.manFlag);
+                        break;
+                    case 'review':
+                        filteredTasks = tasks.filter(task => task.empFlag && !task.manFlag);
+                        break;
+                    case 'failed':
+                        filteredTasks = tasks.filter(task => {
+                            const status = checkTaskStatus(task);
+                            return status === 'Failed';
+                        });
+                        break;
+                }
+
+                if (filteredTasks.length === 0) {
+                    taskList.innerHTML = '<tr><td colspan="5">No tasks found</td></tr>';
+                    return;
+                }
+
+                filteredTasks.forEach(task => {
+                    const status = checkTaskStatus(task);
+                    const row = document.createElement('tr');
+                    
+                    // Format the date and time properly
+                    const dueDate = new Date(task.deadlineDate);
+                    const formattedDate = dueDate.toLocaleDateString();
+                    
+                    // Format time from 24-hour to 12-hour format
+                    const formatTime = (timeStr) => {
+                        const [hours, minutes] = timeStr.split(':');
+                        const hour = parseInt(hours);
+                        const ampm = hour >= 12 ? 'PM' : 'AM';
+                        const hour12 = hour % 12 || 12;
+                        return `${hour12}:${minutes} ${ampm}`;
+                    };
+
+                    const formattedTime = formatTime(task.deadlineTime);
+
+                    // Convert employee IDs to names
+                    const employeeNames = task.emp_ids.map(id => employeeMap[id] || 'Unknown').join(', ');
+
+                    row.innerHTML = `
+                        <td>${task.taskMessage}</td>
+                        <td>${employeeNames}</td>
+                        <td>${status}
+                            ${status === 'Overdue' ? 
+                                '<span class="status-badge overdue">⚠️ Overdue!</span>' : 
+                                status === 'Failed' ? 
+                                '<span class="status-badge failed">❌ Failed</span>' : 
+                                ''}
+                        </td>
+                        <td>${formattedDate}, ${formattedTime}</td>
+                        <td>
+                            <button onclick='viewTaskDetails(${JSON.stringify({...task, employeeNames})})' class="action-btn">
+                                View Details
+                            </button>
+                            ${filter === 'review' ? 
+                                `<button onclick="approveTask('${task._id}')" class="action-btn">
+                                    Approve
+                                </button>` : 
+                                ''}
+                        </td>
+                    `;
+                    taskList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching employee data:', error);
+                showToast('Error loading employee names');
+            }
         }
 
         function addSelectAllButton() {
@@ -1501,7 +1525,7 @@
                     </div>
                     <div class="detail-item">
                         <strong>Assigned To:</strong>
-                        <p>${task.emp_ids.join(', ')}</p>
+                        <p>${task.employeeNames}</p>
                     </div>
                 </div>
             `;
